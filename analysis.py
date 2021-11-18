@@ -8,7 +8,6 @@ counties = {}
 parties = {}
 winers = {}
 
-
 for row in read_csv:
 
     party = row['party']
@@ -17,7 +16,6 @@ for row in read_csv:
     candidate = row['candidate']
     votes = row['total_votes']
     win = row['won']
-    
 
     if candidate not in candidates.keys():
         candidates[candidate] = {}
@@ -37,8 +35,6 @@ for row in read_csv:
     candidates[candidate]['state'][state][county]['votes'] = votes    
     candidates[candidate]['state'][state][county]['won'] = win    
 
-
-
 output = f'''
 =====================PRESIDENTIAL=ANALYSIS=2020====================
 Total candidates: {len(candidates)}
@@ -50,16 +46,23 @@ candidates:
 '''
 for cand in candidates.keys():
     output += cand
-    output += '\nParty: ' + candidates[cand]['party'] + '\n'
+    output += '\nParty: ' + candidates[cand]['party'] + '\nStates:\n\n'
 
+    can_states = []
     for loc in candidates[cand]['state']:
-        output += loc
+        output+=loc
         output += '\n===================================================================\n'
 
+        if loc not in can_states:
+            can_states.append(loc)
 
-
-output += '\n===================================================================\n'
-
-
-
+    
+    for sta in can_states:
+        for cty in candidates[cand]['state'][sta]:
+            if int(candidates[cand]['state'][sta][cty]['votes']):      
+                output+='\t' + cty
+                output+='\n\tVOTES: ' + candidates[cand]['state'][sta][cty]['votes']      
+                output+='\n\tWON: ' + candidates[cand]['state'][sta][cty]['won']      
+                output += '\n\t===================================================================\n'
+        
 print(output)
