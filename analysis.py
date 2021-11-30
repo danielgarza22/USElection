@@ -40,29 +40,36 @@ output = f'''
 Total candidates: {len(candidates)}
 candidates: 
 ===================================================================
-{[ cand  for cand in candidates.keys() ]}
+{[ cand for cand in candidates.keys() ]}
 ===================================================================
 
 '''
+
 for cand in candidates.keys():
-    output += cand
-    output += '\nParty: ' + candidates[cand]['party'] + '\nStates:\n\n'
-
-    can_states = []
-    for loc in candidates[cand]['state']:
-        output+=loc
-        output += '\n===================================================================\n'
-
-        if loc not in can_states:
-            can_states.append(loc)
-
+    party = candidates[cand]['party']
     
-    for sta in can_states:
-        for cty in candidates[cand]['state'][sta]:
-            if int(candidates[cand]['state'][sta][cty]['votes']):      
-                output+='\t' + cty
-                output+='\n\tVOTES: ' + candidates[cand]['state'][sta][cty]['votes']      
-                output+='\n\tWON: ' + candidates[cand]['state'][sta][cty]['won']      
-                output += '\n\t===================================================================\n'
-        
+    for sta in candidates[cand]['state']:
+                
+        output += f'\tCandidate: {cand} \tParty: {party} \n\n'
+        state_votes = 0
+        cty_won = 0
+        output += f'\t\tVOTES\tWON\tCOUNTY'
+        output += '\n===================================================================\n'
+        for cty in  candidates[cand]['state'][sta]:
+            votes = int(candidates[cand]['state'][sta][cty]['votes'])
+            status = candidates[cand]["state"][sta][cty]["won"]
+            
+            if votes:
+                output += f'\t\t{votes}'
+                state_votes += votes
+                output += f'\t{status}\t{cty}\n'
+            
+            if status == True:
+                cty_won += 1
+            
+        output += '===================================================================\n'
+        output += f'{sta}\t{state_votes} \t{cty_won}'
+        output += '\n===================================================================\n\n\n'
+
+                
 print(output)
